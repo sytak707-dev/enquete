@@ -1,0 +1,8 @@
+# Runtime game data (participant names and votes)
+data.json
+
+# Node and editor files
+node_modules/
+.env
+.DS_Store
+*.log
