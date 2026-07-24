@@ -1,4 +1,4 @@
-import { readState, saveState, response, error, body, isAdmin } from '../_lib/game.js';
+import { readState, saveState, clearVotes, response, error, body, isAdmin } from '../_lib/game.js';
 export async function onRequestPost({ request, env }) {
   const payload = await body(request);
   if (!env.ADMIN_PIN) return error('Cloudflare Production 환경에 ADMIN_PIN이 적용되지 않았습니다.', 503);
@@ -8,7 +8,7 @@ export async function onRequestPost({ request, env }) {
     if (action === 'deleteQuestion') { state.questions = state.questions.filter(q => q.id !== value); if (state.currentQuestionId === value) { state.currentQuestionId = null; state.phase = 'lobby'; } }
     if (action === 'selectQuestion' && state.questions.some(q => q.id === value)) { state.currentQuestionId = value; state.questions.forEach(q => q.active = q.id === value); state.phase = 'lobby'; }
     if (action === 'setPhase' && ['lobby', 'voting', 'results'].includes(value)) state.phase = value;
-    if (action === 'resetVotes') state.votes = {};
+    if (action === 'resetVotes') await clearVotes(env, state.currentQuestionId);
     await saveState(env, state); return response({ ok: true });
   } catch { return error('게임 저장소가 아직 설정되지 않았습니다.', 503); }
 }
