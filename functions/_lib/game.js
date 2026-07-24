@@ -25,4 +25,4 @@ export function results(state) {
   return Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'ko'));
 }
 export function publicState(state) { return { ...state, results: results(state) }; }
-export function isAdmin(request, env) { return Boolean(env.ADMIN_PIN) && request.headers.get('x-admin-pin') === env.ADMIN_PIN; }
+export function isAdmin(pin, env) { return Boolean(env.ADMIN_PIN) && pin === env.ADMIN_PIN; }
