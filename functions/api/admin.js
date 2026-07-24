@@ -9,6 +9,7 @@ export async function onRequestPost({ request, env }) {
     if (action === 'selectQuestion' && state.questions.some(q => q.id === value)) { state.currentQuestionId = value; state.questions.forEach(q => q.active = q.id === value); state.phase = 'lobby'; }
     if (action === 'setPhase' && ['lobby', 'voting', 'results'].includes(value)) state.phase = value;
     if (action === 'resetVotes') await clearVotes(env, state.currentQuestionId);
+    if (action === 'resetParticipants') { await Promise.all(state.questions.map(question => clearVotes(env, question.id))); state.participants = []; state.votes = {}; }
     await saveState(env, state); return response({ ok: true });
   } catch { return error('게임 저장소가 아직 설정되지 않았습니다.', 503); }
 }
