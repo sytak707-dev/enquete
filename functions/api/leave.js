@@ -8,7 +8,7 @@ export async function onRequestPost({ request, env }) {
     const state = await readState(env);
     state.participants = state.participants.filter(person => person !== voter);
     await saveState(env, state);
-    await Promise.all(state.questions.map(question => env.ENQUETE_KV.delete(await voteKey(question.id, voter))));
+    await Promise.all(state.questions.map(async question => env.ENQUETE_KV.delete(await voteKey(question.id, voter))));
     return response({ ok: true });
   } catch {
     return error('게임 저장소가 아직 설정되지 않았습니다.', 503);
